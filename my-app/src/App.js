@@ -1,70 +1,64 @@
-import React from 'react';
+import React from 'react'
+import { useGlobalContext } from './context/context'
 
-
-import './App.css';
-import Loading from './components/Loading';
-import Modal from './components/Modal';
-import SetupForm from './components/SetupForm';
-import { useGlobalContext } from './context/context';
-
-
-
+import SetupForm from  './components/SetupForm'
+import Loading from './components/Loading'
+import Modal from './components/Modal'
 function App() {
-
-  const {waiting,loading,questions,index,correct,nextQuestion,checkAnswer} = useGlobalContext()
-
-  if(waiting){
-    return <SetupForm/>
+  const {
+    waiting,
+    loading,
+    questions,
+    index,
+    correct,
+    nextQuestion,
+    checkAnswer,
+  } = useGlobalContext()
+  if (waiting) {
+    return <SetupForm />
   }
-
-  if(loading){
-    return <Loading/>
+  if (loading) {
+    return <Loading />
   }
-
-  console.log(questions);
 
   const { question, incorrect_answers, correct_answer } = questions[index]
-
-  const answers = [...incorrect_answers, correct_answer]
-
+  // const answers = [...incorrect_answers, correct_answer]
+  let answers = [...incorrect_answers]
+  const tempIndex = Math.floor(Math.random() * 4)
+  if (tempIndex === 3) {
+    answers.push(correct_answer)
+  } else {
+    answers.push(answers[tempIndex])
+    answers[tempIndex] = correct_answer
+  }
   return (
     <main>
-     <Modal/>
-     <section className='quiz'>
-      <p className='correct-answers'>
-        Correct answers : {correct}/{index}
-      </p>
-
-      <article className='container'>
-     <h2 dangerouslySetInnerHTML={{__html: question}}/>
-
-     <div className='btn-container'>
-      {answers.map((answer,index) => {
-        return (
-          <button 
-           key={index} 
-           className='answer-btn' 
-           dangerouslySetInnerHTML={{__html: answer}}
-           onClick={() => checkAnswer(correct_answer === answer)}
-            />
-        )
-      })}
-     </div>
-
-      </article>
-
-      <button className='next-question' onClick={nextQuestion}>Next question</button>
-     </section>
+      <Modal />
+      <section className='quiz'>
+        <p className='correct-answers'>
+          correct answers : {correct}/{index}
+        </p>
+        <article className='container'>
+          <h2 dangerouslySetInnerHTML={{ __html: question }} />
+          <div className='btn-container'>
+            {answers.map((answer, index) => {
+              return (
+                <button
+                  key={index}
+                  className='answer-btn'
+                  onClick={() => checkAnswer(correct_answer === answer)}
+                  dangerouslySetInnerHTML={{ __html: answer }}
+                />
+              )
+            })}
+          </div>
+        </article>
+        <button className='next-question' onClick={nextQuestion}>
+          next question
+        </button>
+      </section>
     </main>
   )
-
-
-
-  return (
-    <div className="App">
-      
-    </div>
-  );
 }
 
-export default App;
+export default App
